@@ -72,7 +72,7 @@ async function main() {
   const code = resolveSmokeCode();
   if (!/^\d{6}$/.test(code)) {
     throw new Error(
-      'Smoke auth code is unavailable. Set SMOKE_AUTH_CODE=6digit, or in non-production keep AUTH_FIXED_CODE.',
+      'Smoke auth code is unavailable. Set SMOKE_AUTH_CODE=6digit, or in non-production keep AUTH_FIXED_CODE. Production-like smoke must use a real SMS code from the configured provider.',
     );
   }
 

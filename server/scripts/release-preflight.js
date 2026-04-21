@@ -49,7 +49,9 @@ function validateReleaseEnv(env) {
   const nodeEnv = normalize(env.NODE_ENV, 'development').toLowerCase();
   const driver = normalize(env.RATE_LIMIT_DRIVER, 'memory').toLowerCase();
   const fallbackRaw = normalize(env.RATE_LIMIT_ALLOW_FALLBACK);
+  const smsProvider = normalize(env.SMS_PROVIDER, 'noop').toLowerCase();
   const endpoint = resolveRedisEndpoint(env);
+  const supportedSmsProviders = ['noop', 'aliyun', 'tencent'];
 
   if (nodeEnv !== 'production') {
     errors.push('NODE_ENV must be production for release/pre-release validation.');
@@ -67,6 +69,18 @@ function validateReleaseEnv(env) {
     errors.push('Provide REDIS_URL or both REDIS_HOST and REDIS_PORT.');
   } else if (endpoint.protocol === 'rediss:') {
     warnings.push('REDIS_URL uses rediss://, TCP ping is skipped. Validate network reachability separately.');
+  }
+
+  if (!supportedSmsProviders.includes(smsProvider)) {
+    errors.push(
+      `SMS_PROVIDER must be one of: ${supportedSmsProviders.join(', ')}.`,
+    );
+  } else if (smsProvider === 'noop') {
+    errors.push('SMS_PROVIDER must point to a real SMS provider. noop is local-only and cannot be used for release validation.');
+  } else {
+    errors.push(
+      `SMS provider "${smsProvider}" is not implemented in the current build. Integrate it before release validation can pass.`,
+    );
   }
 
   return { errors, warnings, endpoint };

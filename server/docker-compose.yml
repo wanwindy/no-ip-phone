@@ -20,7 +20,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_ACCESS_EXPIRES: 2h
       JWT_REFRESH_DAYS: 30
-      SMS_PROVIDER: noop
+      SMS_PROVIDER: ${SMS_PROVIDER}
     depends_on:
       postgres:
         condition: service_healthy
