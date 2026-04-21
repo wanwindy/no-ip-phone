@@ -1,0 +1,78 @@
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +19ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSmsModule dependencies initialized[39m[38;5;3m +26ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RateLimitModule] [39m[32mRate limit driver initialized with Redis and recoverable memory fallback[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRateLimitModule dependencies initialized[39m[38;5;3m +1ms[39m
+query: SELECT version()
+query: SELECT * FROM current_schema()
+query: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +38ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +8ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/send-code, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConfigController {/api/v1/config}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/config/dial-prefixes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/config/notices, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:38:50 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+query: START TRANSACTION
+query: INSERT INTO "auth_codes"("id", "phone", "code_hash", "expired_at", "used_at", "send_ip", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, DEFAULT) RETURNING "id", "created_at" -- PARAMETERS: ["13900001041","$2a$10$RzY3p2Mkx0/edGlzw0heye8JmZV2bXcvWaKmqfrOObmaSphtva4PG","2026-04-21T13:44:34.371Z",null,"::ffff:127.0.0.1"]
+query: COMMIT
+[33m[Nest] 23444  - [39m2026/04/21 21:39:34 [33m   WARN[39m [38;5;3m[NoopSmsProvider] [39m[33mnoop SMS provider used for 13900001041, code=123456[39m
+query: SELECT "AuthCodeEntity"."id" AS "AuthCodeEntity_id", "AuthCodeEntity"."phone" AS "AuthCodeEntity_phone", "AuthCodeEntity"."code_hash" AS "AuthCodeEntity_code_hash", "AuthCodeEntity"."expired_at" AS "AuthCodeEntity_expired_at", "AuthCodeEntity"."used_at" AS "AuthCodeEntity_used_at", "AuthCodeEntity"."send_ip" AS "AuthCodeEntity_send_ip", "AuthCodeEntity"."created_at" AS "AuthCodeEntity_created_at" FROM "auth_codes" "AuthCodeEntity" WHERE (("AuthCodeEntity"."phone" = $1) AND ("AuthCodeEntity"."used_at" IS NULL)) ORDER BY "AuthCodeEntity"."created_at" DESC LIMIT 1 -- PARAMETERS: ["13900001041"]
+query: SELECT "AuthCodeEntity"."id" AS "AuthCodeEntity_id", "AuthCodeEntity"."phone" AS "AuthCodeEntity_phone", "AuthCodeEntity"."code_hash" AS "AuthCodeEntity_code_hash", "AuthCodeEntity"."expired_at" AS "AuthCodeEntity_expired_at", "AuthCodeEntity"."used_at" AS "AuthCodeEntity_used_at", "AuthCodeEntity"."send_ip" AS "AuthCodeEntity_send_ip", "AuthCodeEntity"."created_at" AS "AuthCodeEntity_created_at" FROM "auth_codes" "AuthCodeEntity" WHERE "AuthCodeEntity"."id" IN ($1) -- PARAMETERS: ["2556dc98-0609-4028-868e-985ca325024d"]
+query: START TRANSACTION
+query: UPDATE "auth_codes" SET "used_at" = $1 WHERE "id" IN ($2) -- PARAMETERS: ["2026-04-21T13:39:34.490Z","2556dc98-0609-4028-868e-985ca325024d"]
+query: COMMIT
+query: SELECT "UserEntity"."id" AS "UserEntity_id", "UserEntity"."phone" AS "UserEntity_phone", "UserEntity"."status" AS "UserEntity_status", "UserEntity"."created_at" AS "UserEntity_created_at", "UserEntity"."last_login_at" AS "UserEntity_last_login_at" FROM "users" "UserEntity" WHERE (("UserEntity"."phone" = $1)) LIMIT 1 -- PARAMETERS: ["13900001041"]
+query: START TRANSACTION
+query: INSERT INTO "users"("id", "phone", "status", "created_at", "last_login_at") VALUES (DEFAULT, $1, $2, DEFAULT, $3) RETURNING "id", "status", "created_at" -- PARAMETERS: ["13900001041","active","2026-04-21T13:39:34.501Z"]
+query: COMMIT
+query: UPDATE "users" SET "last_login_at" = $1 WHERE "id" IN ($2) -- PARAMETERS: ["2026-04-21T13:39:34.505Z","bed86356-83c6-4093-a627-b601e5fc0bf1"]
+query: START TRANSACTION
+query: INSERT INTO "refresh_tokens"("id", "user_id", "token_hash", "device_id", "expired_at", "revoked_at", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, DEFAULT) RETURNING "id", "created_at" -- PARAMETERS: ["bed86356-83c6-4093-a627-b601e5fc0bf1","3c374beaec55d071f37e1c4e5a8369231ee7e2c7d3eb46c9156de4206e6b1d3d","round3-redis-device","2026-05-21T13:39:34.510Z",null]
+query: COMMIT
+query: SELECT "UserEntity"."id" AS "UserEntity_id", "UserEntity"."phone" AS "UserEntity_phone", "UserEntity"."status" AS "UserEntity_status", "UserEntity"."created_at" AS "UserEntity_created_at", "UserEntity"."last_login_at" AS "UserEntity_last_login_at" FROM "users" "UserEntity" WHERE (("UserEntity"."id" = $1)) LIMIT 1 -- PARAMETERS: ["bed86356-83c6-4093-a627-b601e5fc0bf1"]
+query: SELECT "DialPrefixConfigEntity"."id" AS "DialPrefixConfigEntity_id", "DialPrefixConfigEntity"."country_code" AS "DialPrefixConfigEntity_country_code", "DialPrefixConfigEntity"."carrier_name" AS "DialPrefixConfigEntity_carrier_name", "DialPrefixConfigEntity"."prefix" AS "DialPrefixConfigEntity_prefix", "DialPrefixConfigEntity"."status" AS "DialPrefixConfigEntity_status", "DialPrefixConfigEntity"."priority" AS "DialPrefixConfigEntity_priority", "DialPrefixConfigEntity"."remark" AS "DialPrefixConfigEntity_remark", "DialPrefixConfigEntity"."created_at" AS "DialPrefixConfigEntity_created_at", "DialPrefixConfigEntity"."updated_at" AS "DialPrefixConfigEntity_updated_at" FROM "dial_prefix_configs" "DialPrefixConfigEntity" WHERE (("DialPrefixConfigEntity"."country_code" = $1) AND ("DialPrefixConfigEntity"."status" = $2)) ORDER BY "DialPrefixConfigEntity"."priority" DESC, "DialPrefixConfigEntity"."carrier_name" ASC -- PARAMETERS: ["CN","active"]
+query: SELECT "notice"."id" AS "notice_id", "notice"."title" AS "notice_title", "notice"."content" AS "notice_content", "notice"."type" AS "notice_type", "notice"."status" AS "notice_status", "notice"."start_at" AS "notice_start_at", "notice"."end_at" AS "notice_end_at", "notice"."created_at" AS "notice_created_at" FROM "notices" "notice" WHERE "notice"."status" = $1 AND ("notice"."start_at" IS NULL OR "notice"."start_at" <= $2) AND ("notice"."end_at" IS NULL OR "notice"."end_at" >= $2) ORDER BY "notice"."created_at" DESC -- PARAMETERS: ["active","2026-04-21T13:39:34.533Z"]
+query: SELECT "RefreshTokenEntity"."id" AS "RefreshTokenEntity_id", "RefreshTokenEntity"."user_id" AS "RefreshTokenEntity_user_id", "RefreshTokenEntity"."token_hash" AS "RefreshTokenEntity_token_hash", "RefreshTokenEntity"."device_id" AS "RefreshTokenEntity_device_id", "RefreshTokenEntity"."expired_at" AS "RefreshTokenEntity_expired_at", "RefreshTokenEntity"."revoked_at" AS "RefreshTokenEntity_revoked_at", "RefreshTokenEntity"."created_at" AS "RefreshTokenEntity_created_at" FROM "refresh_tokens" "RefreshTokenEntity" WHERE (("RefreshTokenEntity"."token_hash" = $1) AND ("RefreshTokenEntity"."revoked_at" IS NULL)) ORDER BY "RefreshTokenEntity"."created_at" DESC LIMIT 1 -- PARAMETERS: ["3c374beaec55d071f37e1c4e5a8369231ee7e2c7d3eb46c9156de4206e6b1d3d"]
+query: SELECT "RefreshTokenEntity"."id" AS "RefreshTokenEntity_id", "RefreshTokenEntity"."user_id" AS "RefreshTokenEntity_user_id", "RefreshTokenEntity"."token_hash" AS "RefreshTokenEntity_token_hash", "RefreshTokenEntity"."device_id" AS "RefreshTokenEntity_device_id", "RefreshTokenEntity"."expired_at" AS "RefreshTokenEntity_expired_at", "RefreshTokenEntity"."revoked_at" AS "RefreshTokenEntity_revoked_at", "RefreshTokenEntity"."created_at" AS "RefreshTokenEntity_created_at" FROM "refresh_tokens" "RefreshTokenEntity" WHERE "RefreshTokenEntity"."id" IN ($1) -- PARAMETERS: ["a1c42d59-b3e8-4659-a549-578e89b66c12"]
+query: START TRANSACTION
+query: UPDATE "refresh_tokens" SET "revoked_at" = $1 WHERE "id" IN ($2) -- PARAMETERS: ["2026-04-21T13:39:34.543Z","a1c42d59-b3e8-4659-a549-578e89b66c12"]
+query: COMMIT
+query: START TRANSACTION
+query: INSERT INTO "refresh_tokens"("id", "user_id", "token_hash", "device_id", "expired_at", "revoked_at", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, DEFAULT) RETURNING "id", "created_at" -- PARAMETERS: ["bed86356-83c6-4093-a627-b601e5fc0bf1","ec6049ea752271fd3e67197dcaee3d7f529dfaeacdeb9c13a825b1f538d7bd09","round3-redis-device","2026-05-21T13:39:34.548Z",null]
+query: COMMIT
+query: SELECT "RefreshTokenEntity"."id" AS "RefreshTokenEntity_id", "RefreshTokenEntity"."user_id" AS "RefreshTokenEntity_user_id", "RefreshTokenEntity"."token_hash" AS "RefreshTokenEntity_token_hash", "RefreshTokenEntity"."device_id" AS "RefreshTokenEntity_device_id", "RefreshTokenEntity"."expired_at" AS "RefreshTokenEntity_expired_at", "RefreshTokenEntity"."revoked_at" AS "RefreshTokenEntity_revoked_at", "RefreshTokenEntity"."created_at" AS "RefreshTokenEntity_created_at" FROM "refresh_tokens" "RefreshTokenEntity" WHERE (("RefreshTokenEntity"."user_id" = $1) AND ("RefreshTokenEntity"."token_hash" = $2) AND ("RefreshTokenEntity"."revoked_at" IS NULL)) LIMIT 1 -- PARAMETERS: ["bed86356-83c6-4093-a627-b601e5fc0bf1","ec6049ea752271fd3e67197dcaee3d7f529dfaeacdeb9c13a825b1f538d7bd09"]
+query: SELECT "RefreshTokenEntity"."id" AS "RefreshTokenEntity_id", "RefreshTokenEntity"."user_id" AS "RefreshTokenEntity_user_id", "RefreshTokenEntity"."token_hash" AS "RefreshTokenEntity_token_hash", "RefreshTokenEntity"."device_id" AS "RefreshTokenEntity_device_id", "RefreshTokenEntity"."expired_at" AS "RefreshTokenEntity_expired_at", "RefreshTokenEntity"."revoked_at" AS "RefreshTokenEntity_revoked_at", "RefreshTokenEntity"."created_at" AS "RefreshTokenEntity_created_at" FROM "refresh_tokens" "RefreshTokenEntity" WHERE "RefreshTokenEntity"."id" IN ($1) -- PARAMETERS: ["b062590a-b546-4dec-93d5-4d6fdb29e88b"]
+query: START TRANSACTION
+query: UPDATE "refresh_tokens" SET "revoked_at" = $1 WHERE "id" IN ($2) -- PARAMETERS: ["2026-04-21T13:39:34.555Z","b062590a-b546-4dec-93d5-4d6fdb29e88b"]
+query: COMMIT
+query: START TRANSACTION
+query: INSERT INTO "auth_codes"("id", "phone", "code_hash", "expired_at", "used_at", "send_ip", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, DEFAULT) RETURNING "id", "created_at" -- PARAMETERS: ["13900001051","$2a$10$RyB0vCczkJr/XUg0wTrSQeiZGgSPm0qZiyXuOGOZrj8MKBK8kQmq.","2026-04-21T13:45:41.783Z",null,"::ffff:127.0.0.1"]
+query: COMMIT
+[33m[Nest] 23444  - [39m2026/04/21 21:40:41 [33m   WARN[39m [38;5;3m[NoopSmsProvider] [39m[33mnoop SMS provider used for 13900001051, code=123456[39m
+[33m[Nest] 23444  - [39m2026/04/21 21:40:54 [33m   WARN[39m [38;5;3m[RateLimitModule] [39m[33mRedis rate limit store failed during reserveOnce: READONLY You can't write against a read only slave.. Using memory fallback until 2026-04-21T13:40:57.642Z[39m
+query: START TRANSACTION
+query: INSERT INTO "auth_codes"("id", "phone", "code_hash", "expired_at", "used_at", "send_ip", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, DEFAULT) RETURNING "id", "created_at" -- PARAMETERS: ["13900001052","$2a$10$fhfU7ZI/OpC05lKQv30HMeUx5JkFN2i8pJq2SnRlHC8EzTsR4AeHS","2026-04-21T13:45:54.713Z",null,"::ffff:127.0.0.1"]
+query: COMMIT
+[33m[Nest] 23444  - [39m2026/04/21 21:40:54 [33m   WARN[39m [38;5;3m[NoopSmsProvider] [39m[33mnoop SMS provider used for 13900001052, code=123456[39m
+[32m[Nest] 23444  - [39m2026/04/21 21:40:58 [32m    LOG[39m [38;5;3m[RateLimitModule] [39m[32mRedis rate limit store recovered during reserveOnce, resuming primary usage[39m
+query: START TRANSACTION
+query: INSERT INTO "auth_codes"("id", "phone", "code_hash", "expired_at", "used_at", "send_ip", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, DEFAULT) RETURNING "id", "created_at" -- PARAMETERS: ["13900001053","$2a$10$Y4miLJYlDbM1GDj/SNIxeeybp.no8HrY4aJ1GBztUCCXTwFrs5Te.","2026-04-21T13:45:58.856Z",null,"::ffff:127.0.0.1"]
+query: COMMIT
+[33m[Nest] 23444  - [39m2026/04/21 21:40:58 [33m   WARN[39m [38;5;3m[NoopSmsProvider] [39m[33mnoop SMS provider used for 13900001053, code=123456[39m
