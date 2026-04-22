@@ -1,0 +1,17 @@
+{
+  "event_name": "telephony.outbound.accepted",
+  "event_direction": "outbound",
+  "provider_key": "provider-au-01",
+  "trunk_key": "au-outbound-01",
+  "provider_event_id": "evt_out_0001",
+  "provider_call_id": "provcall_out_0001",
+  "occurred_at": "2026-04-22T10:10:00Z",
+  "session_direction": "outbound",
+  "trace_id": "trace_r5r3_out_0001",
+  "tenant_ref": "tenant_alpha",
+  "call_session_ref": "44444444-4444-4444-8444-444444444444",
+  "display_did": "+617676021983",
+  "remote_number": "+8613812345678",
+  "provider_raw_status": "accepted",
+  "provider_raw_reason": null
+}

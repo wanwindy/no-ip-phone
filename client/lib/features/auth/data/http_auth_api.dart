@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/storage/secure_key_value_store.dart';
-import '../../../shared/utils/phone_utils.dart';
 import 'auth_api.dart';
 
 class HttpAuthApi implements AuthApi {
@@ -19,15 +18,15 @@ class HttpAuthApi implements AuthApi {
 
   @override
   Future<AuthTokenPair> login({
-    required String phone,
-    required String code,
+    required String username,
+    required String password,
     required String deviceId,
   }) async {
     final response = await _dio.post<dynamic>(
       '/api/v1/auth/login',
       data: <String, Object>{
-        'phone': normalizePhoneNumber(phone),
-        'code': code,
+        'username': username.trim(),
+        'password': password,
         'deviceId': deviceId,
       },
     );
@@ -68,26 +67,6 @@ class HttpAuthApi implements AuthApi {
   }
 
   @override
-  Future<SendCodeResponse> sendCode(String phone) async {
-    final response = await _dio.post<dynamic>(
-      '/api/v1/auth/send-code',
-      data: <String, Object>{
-        'phone': normalizePhoneNumber(phone),
-      },
-    );
-    final envelope = await decodeEnvelope<SendCodeResponse>(
-      response,
-      decodeData: (value) {
-        final json = _asMap(value);
-        return SendCodeResponse(
-          cooldownSeconds: (json['cooldown'] as num?)?.toInt() ?? 60,
-        );
-      },
-    );
-    return envelope.data!;
-  }
-
-  @override
   Future<AuthProfile> me(String accessToken) async {
     final response = await _dio.get<dynamic>(
       '/api/v1/auth/me',
@@ -101,10 +80,13 @@ class HttpAuthApi implements AuthApi {
         final json = _asMap(value);
         return AuthProfile(
           id: json['id'] as String? ?? '',
-          phone: json['phone'] as String? ?? '',
+          username: json['username'] as String? ?? '',
+          displayName: json['displayName'] as String? ?? '',
+          role: json['role'] as String? ?? 'app_user',
           status: json['status'] as String? ?? 'active',
           createdAt:
-              DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
+              DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+                  DateTime.now(),
         );
       },
     );

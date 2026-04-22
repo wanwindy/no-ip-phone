@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ValidationPipe } from '@nestjs/common';
+import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -9,8 +9,26 @@ import { assertReleaseRuntimePreflight } from './common/runtime/release-runtime.
 async function bootstrap(): Promise<void> {
   assertReleaseRuntimePreflight();
 
-  const app = await NestFactory.create(AppModule, { cors: true });
-  app.setGlobalPrefix('api/v1');
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    rawBody: true,
+  });
+  app.setGlobalPrefix('api/v1', {
+    exclude: [
+      {
+        path: 'webhooks/inbound-call',
+        method: RequestMethod.POST,
+      },
+      {
+        path: 'webhooks/call-status',
+        method: RequestMethod.POST,
+      },
+      {
+        path: 'webhooks/recording-ready',
+        method: RequestMethod.POST,
+      },
+    ],
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

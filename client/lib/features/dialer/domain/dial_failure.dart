@@ -3,6 +3,7 @@ enum DialFailureType {
   configUnavailable,
   unsupportedDevice,
   launchFailed,
+  outboundTaskFailed,
   unknown,
 }
 
@@ -16,6 +17,8 @@ String dialFailureMessage(DialFailureType type) {
       return '当前设备没有可用的系统电话应用，请检查默认拨号器后再试。';
     case DialFailureType.launchFailed:
       return '系统拨号器未能成功拉起，请稍后重试，或切换普通拨打。';
+    case DialFailureType.outboundTaskFailed:
+      return '平台外呼任务创建失败，请稍后重试，或切回兼容直拨。';
     case DialFailureType.unknown:
       return '拨号失败，请稍后重试。';
   }

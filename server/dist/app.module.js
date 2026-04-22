@@ -12,7 +12,10 @@ const config_1 = require("@nestjs/config");
 const core_1 = require("@nestjs/core");
 const typeorm_1 = require("@nestjs/typeorm");
 const auth_module_1 = require("./modules/auth/auth.module");
+const admin_module_1 = require("./modules/admin/admin.module");
+const calls_module_1 = require("./modules/calls/calls.module");
 const config_module_1 = require("./modules/config/config.module");
+const telephony_module_1 = require("./modules/telephony/telephony.module");
 const jwt_auth_guard_1 = require("./common/guards/jwt-auth.guard");
 let AppModule = class AppModule {
 };
@@ -39,6 +42,9 @@ exports.AppModule = AppModule = __decorate([
                 }),
             }),
             auth_module_1.AuthModule,
+            admin_module_1.AdminModule,
+            calls_module_1.CallsModule,
+            telephony_module_1.TelephonyModule,
             config_module_1.ConfigAppModule,
         ],
         providers: [

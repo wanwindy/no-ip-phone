@@ -1,0 +1,61 @@
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +15ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTenantModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +39ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RateLimitModule] [39m[32mRate limit driver initialized with Redis and recoverable memory fallback[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRateLimitModule dependencies initialized[39m[38;5;3m +1ms[39m
+query: SELECT version()
+query: SELECT * FROM current_schema()
+query: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +38ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAccountModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCallsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +9ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminAuthController {/api/v1/admin/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminAccountsController {/api/v1/admin/accounts}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/accounts, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/accounts, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/accounts/:accountId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminConfigController {/api/v1/admin/config}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/dial-prefixes, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/dial-prefixes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/dial-prefixes/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/notices, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/notices, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/notices/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConfigController {/api/v1/config}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/config/dial-prefixes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/config/notices, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCallsController {/api/v1/calls}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/calls/outbound, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/calls/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 33544  - [39m2026/04/22 19:45:24 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+query: SELECT "AccountEntity"."id" AS "AccountEntity_id", "AccountEntity"."username" AS "AccountEntity_username", "AccountEntity"."display_name" AS "AccountEntity_display_name", "AccountEntity"."password_hash" AS "AccountEntity_password_hash", "AccountEntity"."role" AS "AccountEntity_role", "AccountEntity"."status" AS "AccountEntity_status", "AccountEntity"."created_at" AS "AccountEntity_created_at", "AccountEntity"."last_login_at" AS "AccountEntity_last_login_at" FROM "accounts" "AccountEntity" WHERE (("AccountEntity"."username" = $1) AND ("AccountEntity"."role" = $2)) LIMIT 1 -- PARAMETERS: ["demo_user","app_user"]
+query: UPDATE "accounts" SET "last_login_at" = $1 WHERE "id" IN ($2) -- PARAMETERS: ["2026-04-22T11:45:48.478Z","17ef43a7-8763-450a-9577-364e5efa8957"]
+query: START TRANSACTION
+query: INSERT INTO "account_refresh_tokens"("id", "account_id", "role", "token_hash", "device_id", "expired_at", "revoked_at", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, DEFAULT) RETURNING "id", "created_at" -- PARAMETERS: ["17ef43a7-8763-450a-9577-364e5efa8957","app_user","ce6229e895631170a25448d04a2432376c4082763c294c50be36592b74c6900f","qa-r5-r2-d-3102","2026-05-22T11:45:48.483Z",null]
+query: COMMIT
+query: SELECT "TenantMemberEntity"."id" AS "TenantMemberEntity_id", "TenantMemberEntity"."tenant_id" AS "TenantMemberEntity_tenant_id", "TenantMemberEntity"."account_id" AS "TenantMemberEntity_account_id", "TenantMemberEntity"."tenant_role" AS "TenantMemberEntity_tenant_role", "TenantMemberEntity"."status" AS "TenantMemberEntity_status", "TenantMemberEntity"."joined_at" AS "TenantMemberEntity_joined_at", "TenantMemberEntity"."created_at" AS "TenantMemberEntity_created_at", "TenantMemberEntity"."updated_at" AS "TenantMemberEntity_updated_at" FROM "tenant_members" "TenantMemberEntity" WHERE (("TenantMemberEntity"."account_id" = $1) AND ("TenantMemberEntity"."status" = $2)) ORDER BY "TenantMemberEntity"."joined_at" ASC, "TenantMemberEntity"."created_at" ASC LIMIT 1 -- PARAMETERS: ["17ef43a7-8763-450a-9577-364e5efa8957","active"]
+query failed: SELECT "TenantMemberEntity"."id" AS "TenantMemberEntity_id", "TenantMemberEntity"."tenant_id" AS "TenantMemberEntity_tenant_id", "TenantMemberEntity"."account_id" AS "TenantMemberEntity_account_id", "TenantMemberEntity"."tenant_role" AS "TenantMemberEntity_tenant_role", "TenantMemberEntity"."status" AS "TenantMemberEntity_status", "TenantMemberEntity"."joined_at" AS "TenantMemberEntity_joined_at", "TenantMemberEntity"."created_at" AS "TenantMemberEntity_created_at", "TenantMemberEntity"."updated_at" AS "TenantMemberEntity_updated_at" FROM "tenant_members" "TenantMemberEntity" WHERE (("TenantMemberEntity"."account_id" = $1) AND ("TenantMemberEntity"."status" = $2)) ORDER BY "TenantMemberEntity"."joined_at" ASC, "TenantMemberEntity"."created_at" ASC LIMIT 1 -- PARAMETERS: ["17ef43a7-8763-450a-9577-364e5efa8957","active"]
+error: error: 关系 "tenant_members" 不存在

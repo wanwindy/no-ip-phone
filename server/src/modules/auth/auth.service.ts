@@ -2,17 +2,17 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { IsNull, Repository } from 'typeorm';
-import { AppException } from '../../common/exceptions/app.exception';
 import { ErrorCode } from '../../common/constants/error-codes';
-import { SmsService } from '../sms/sms.service';
-import { UserService } from '../user/user.service';
+import { AppException } from '../../common/exceptions/app.exception';
+import {
+  AccountProfile,
+  AccountRole,
+  AccountService,
+} from '../account/account.service';
+import { AccountRefreshTokenEntity } from '../account/entities/account-refresh-token.entity';
 import { RateLimitService } from '../rate-limit/rate-limit.service';
-import { UserStatus } from '../user/entities/user.entity';
-import { AuthCodeEntity } from './entities/auth-code.entity';
-import { RefreshTokenEntity } from './entities/refresh-token.entity';
 
 export interface TokenPair {
   accessToken: string;
@@ -23,75 +23,49 @@ export interface TokenPair {
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly smsService: SmsService,
-    private readonly userService: UserService,
+    private readonly accountService: AccountService,
     private readonly rateLimitService: RateLimitService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    @InjectRepository(AuthCodeEntity)
-    private readonly authCodesRepository: Repository<AuthCodeEntity>,
-    @InjectRepository(RefreshTokenEntity)
-    private readonly refreshTokensRepository: Repository<RefreshTokenEntity>,
+    @InjectRepository(AccountRefreshTokenEntity)
+    private readonly refreshTokensRepository: Repository<AccountRefreshTokenEntity>,
   ) {}
 
-  async sendCode(phone: string, ip: string): Promise<{ cooldown: number }> {
-    await this.rateLimitService.checkSendCode(phone, ip);
-
-    const code = this.resolveCodeForCurrentEnvironment();
-    const codeHash = await bcrypt.hash(code, 10);
-
-    await this.authCodesRepository.save(
-      this.authCodesRepository.create({
-        phone,
-        codeHash,
-        expiredAt: new Date(Date.now() + 5 * 60 * 1000),
-        usedAt: null,
-        sendIp: ip,
-      }),
-    );
-
-    await this.smsService.send(phone, code);
-
-    return { cooldown: 60 };
-  }
-
-  async login(phone: string, code: string, deviceId: string): Promise<TokenPair> {
-    const authCode = await this.authCodesRepository.findOne({
-      where: { phone, usedAt: IsNull() },
-      order: { createdAt: 'DESC' },
-    });
-
-    if (!authCode || authCode.expiredAt.getTime() < Date.now()) {
-      throw new AppException(
-        ErrorCode.CODE_EXPIRED,
-        '验证码已过期',
-        401,
+  async loginWithRole(
+    username: string,
+    password: string,
+    deviceId: string,
+    role: AccountRole,
+  ): Promise<TokenPair> {
+    const loginKey = username.trim().toLowerCase();
+    try {
+      const account = await this.accountService.validateCredentials(
+        loginKey,
+        password,
+        role,
       );
+      await this.accountService.touchLastLoginAt(account.id);
+      await this.rateLimitService.resetFailedAttempts(loginKey);
+      return this.issueTokens(account.id, account.username, deviceId, role);
+    } catch (error) {
+      if (
+        error instanceof AppException &&
+        error.code === ErrorCode.ACCOUNT_CREDENTIALS_INVALID
+      ) {
+        await this.rateLimitService.recordFailedAttempt(loginKey);
+      }
+      throw error;
     }
-
-    const matched = await bcrypt.compare(code, authCode.codeHash);
-    if (!matched) {
-      await this.rateLimitService.recordFailedAttempt(phone);
-      throw new AppException(ErrorCode.CODE_WRONG, '验证码错误', 401);
-    }
-
-    authCode.usedAt = new Date();
-    await this.authCodesRepository.save(authCode);
-
-    const user = await this.userService.findOrCreate(phone);
-    if (user.status !== UserStatus.Active) {
-      throw new AppException(ErrorCode.ACCOUNT_BANNED, '账户已被封禁', 403);
-    }
-
-    await this.userService.touchLastLoginAt(user.id);
-    await this.rateLimitService.resetFailedAttempts(phone);
-    return this.issueTokens(user.id, deviceId);
   }
 
-  async refresh(refreshToken: string, deviceId: string): Promise<TokenPair> {
+  async refreshWithRole(
+    refreshToken: string,
+    deviceId: string,
+    role: AccountRole,
+  ): Promise<TokenPair> {
     const tokenHash = this.hashToken(refreshToken);
     const stored = await this.refreshTokensRepository.findOne({
-      where: { tokenHash, revokedAt: IsNull() },
+      where: { tokenHash, revokedAt: IsNull(), role },
       order: { createdAt: 'DESC' },
     });
 
@@ -114,13 +88,34 @@ export class AuthService {
     stored.revokedAt = new Date();
     await this.refreshTokensRepository.save(stored);
 
-    return this.issueTokens(stored.userId, deviceId);
+    const account = await this.accountService.findById(stored.accountId);
+    if (!account) {
+      throw new AppException(
+        ErrorCode.REFRESH_TOKEN_INVALID,
+        'Refresh Token 无效或已过期',
+        401,
+      );
+    }
+
+    if (account.status === 'disabled') {
+      throw new AppException(ErrorCode.ACCOUNT_DISABLED, '账号已停用', 403);
+    }
+
+    if (account.status === 'banned') {
+      throw new AppException(ErrorCode.ACCOUNT_BANNED, '账号已被封禁', 403);
+    }
+
+    return this.issueTokens(account.id, account.username, deviceId, role);
   }
 
-  async logout(userId: string, refreshToken: string): Promise<void> {
+  async logoutWithRole(
+    accountId: string,
+    refreshToken: string,
+    role: AccountRole,
+  ): Promise<void> {
     const tokenHash = this.hashToken(refreshToken);
     const stored = await this.refreshTokensRepository.findOne({
-      where: { userId, tokenHash, revokedAt: IsNull() },
+      where: { accountId, tokenHash, role, revokedAt: IsNull() },
     });
 
     if (!stored) {
@@ -135,8 +130,8 @@ export class AuthService {
     await this.refreshTokensRepository.save(stored);
   }
 
-  async me(userId: string) {
-    const profile = await this.userService.getPublicProfile(userId);
+  async me(accountId: string): Promise<AccountProfile> {
+    const profile = await this.accountService.getProfile(accountId);
     if (!profile) {
       throw new UnauthorizedException();
     }
@@ -144,13 +139,18 @@ export class AuthService {
     return profile;
   }
 
-  private async issueTokens(userId: string, deviceId: string): Promise<TokenPair> {
-    const expiresInText = this.configService.get<string>('JWT_ACCESS_EXPIRES', '2h');
-    const refreshDays = Number(this.configService.get<string>('JWT_REFRESH_DAYS', '30'));
+  private async issueTokens(
+    accountId: string,
+    username: string,
+    deviceId: string,
+    role: AccountRole,
+  ): Promise<TokenPair> {
+    const expiresInText = this.resolveAccessExpires(role);
+    const refreshDays = this.resolveRefreshDays(role);
     const accessToken = this.jwtService.sign(
-      { sub: userId, deviceId },
+      { sub: accountId, username, role, deviceId },
       {
-        secret: this.configService.get<string>('JWT_SECRET', 'replace-me'),
+        secret: this.resolveJwtSecret(role),
         expiresIn: expiresInText,
       },
     );
@@ -160,7 +160,8 @@ export class AuthService {
 
     await this.refreshTokensRepository.save(
       this.refreshTokensRepository.create({
-        userId,
+        accountId,
+        role,
         tokenHash,
         deviceId,
         expiredAt: new Date(Date.now() + refreshDays * 24 * 60 * 60 * 1000),
@@ -172,36 +173,37 @@ export class AuthService {
     return { accessToken, refreshToken, expiresIn };
   }
 
-  private generateCode(): string {
-    return crypto.randomInt(100000, 999999).toString();
+  private hashToken(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
   }
 
-  private resolveCodeForCurrentEnvironment(): string {
-    if (this.isFixedCodeFlowEnabled()) {
-      return this.normalizeFixedCode(
-        this.configService.get<string>('AUTH_FIXED_CODE', '123456'),
+  private resolveJwtSecret(role: AccountRole): string {
+    if (role === AccountRole.Admin) {
+      return this.configService.get<string>(
+        'ADMIN_JWT_SECRET',
+        this.configService.get<string>('JWT_SECRET', 'replace-me'),
       );
     }
 
-    return this.generateCode();
+    return this.configService.get<string>('JWT_SECRET', 'replace-me');
   }
 
-  private isFixedCodeFlowEnabled(): boolean {
-    const nodeEnv = this.configService.get<string>('NODE_ENV', 'development');
-    const smsProvider = this.configService.get<string>('SMS_PROVIDER', 'noop');
-    return nodeEnv !== 'production' && smsProvider === 'noop';
-  }
-
-  private normalizeFixedCode(value: string): string {
-    if (/^\d{6}$/.test(value)) {
-      return value;
+  private resolveAccessExpires(role: AccountRole): string {
+    if (role === AccountRole.Admin) {
+      return this.configService.get<string>('ADMIN_JWT_ACCESS_EXPIRES', '2h');
     }
 
-    return '123456';
+    return this.configService.get<string>('JWT_ACCESS_EXPIRES', '2h');
   }
 
-  private hashToken(token: string): string {
-    return crypto.createHash('sha256').update(token).digest('hex');
+  private resolveRefreshDays(role: AccountRole): number {
+    if (role === AccountRole.Admin) {
+      return Number(
+        this.configService.get<string>('ADMIN_JWT_REFRESH_DAYS', '30'),
+      );
+    }
+
+    return Number(this.configService.get<string>('JWT_REFRESH_DAYS', '30'));
   }
 
   private parseExpiresInSeconds(value: string): number {

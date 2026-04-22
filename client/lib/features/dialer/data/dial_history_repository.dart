@@ -3,18 +3,21 @@ import 'dart:convert';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/storage/preferences_store.dart';
 import '../../../shared/utils/phone_utils.dart';
+import '../domain/dial_mode.dart';
 
 class RecentDialEntry {
   const RecentDialEntry({
     required this.phoneNumber,
     required this.displayNumber,
     required this.isPrivateDial,
+    required this.mode,
     required this.createdAt,
   });
 
   final String phoneNumber;
   final String displayNumber;
   final bool isPrivateDial;
+  final DialMode mode;
   final DateTime createdAt;
 
   Map<String, dynamic> toJson() {
@@ -22,6 +25,7 @@ class RecentDialEntry {
       'phoneNumber': phoneNumber,
       'displayNumber': displayNumber,
       'isPrivateDial': isPrivateDial,
+      'mode': mode.wireValue,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -31,7 +35,9 @@ class RecentDialEntry {
       phoneNumber: json['phoneNumber'] as String? ?? '',
       displayNumber: json['displayNumber'] as String? ?? '',
       isPrivateDial: json['isPrivateDial'] as bool? ?? false,
-      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+      mode: dialModeFromWireValue(json['mode'] as String?),
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
@@ -72,9 +78,11 @@ class LocalDialHistoryRepository implements DialHistoryRepository {
   Future<List<RecentDialEntry>> load() async {
     final items = await _store.readStringList(_historyKey) ?? <String>[];
     return items
-        .map((item) => RecentDialEntry.fromJson(
-              jsonDecode(item) as Map<String, dynamic>,
-            ))
+        .map(
+          (item) => RecentDialEntry.fromJson(
+            jsonDecode(item) as Map<String, dynamic>,
+          ),
+        )
         .toList();
   }
 }
@@ -82,11 +90,13 @@ class LocalDialHistoryRepository implements DialHistoryRepository {
 RecentDialEntry recentEntryFromDialPlan({
   required String phoneNumber,
   required bool isPrivateDial,
+  required DialMode mode,
 }) {
   return RecentDialEntry(
     phoneNumber: phoneNumber,
     displayNumber: maskPhoneNumber(phoneNumber),
     isPrivateDial: isPrivateDial,
+    mode: mode,
     createdAt: DateTime.now(),
   );
 }

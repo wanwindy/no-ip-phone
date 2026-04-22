@@ -13,6 +13,8 @@ class AppTextField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.maxLength,
+    this.maxLines = 1,
+    this.minLines,
     this.onChanged,
     this.autofocus = false,
   });
@@ -27,6 +29,8 @@ class AppTextField extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final int? maxLength;
+  final int maxLines;
+  final int? minLines;
   final ValueChanged<String>? onChanged;
   final bool autofocus;
 
@@ -39,6 +43,8 @@ class AppTextField extends StatelessWidget {
       readOnly: readOnly,
       onTap: onTap,
       maxLength: maxLength,
+      maxLines: obscureText ? 1 : maxLines,
+      minLines: obscureText ? 1 : minLines,
       onChanged: onChanged,
       autofocus: autofocus,
       decoration: InputDecoration(

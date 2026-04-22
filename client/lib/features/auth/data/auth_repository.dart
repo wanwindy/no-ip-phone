@@ -1,16 +1,13 @@
 import '../../../core/network/api_exception.dart';
 import '../../../core/storage/secure_key_value_store.dart';
-import '../../../shared/utils/phone_utils.dart';
 import '../domain/auth_session.dart';
 import 'auth_api.dart';
 import 'session_store.dart';
 
 abstract class AuthRepository {
-  Future<SendCodeResponse> sendCode(String phone);
-
   Future<AuthSession> login({
-    required String phone,
-    required String code,
+    required String username,
+    required String password,
   });
 
   Future<AuthSession?> restoreSession();
@@ -38,18 +35,19 @@ class DefaultAuthRepository implements AuthRepository {
 
   @override
   Future<AuthSession> login({
-    required String phone,
-    required String code,
+    required String username,
+    required String password,
   }) async {
     final tokens = await _api.login(
-      phone: normalizePhoneNumber(phone),
-      code: code,
+      username: username.trim(),
+      password: password,
       deviceId: await _deviceId(),
     );
+    final profile = await _api.me(tokens.accessToken);
     final session = AuthSession(
       user: AuthUser(
-        phone: normalizePhoneNumber(phone),
-        displayPhone: maskPhoneNumber(phone),
+        username: profile.username,
+        displayName: profile.displayName,
       ),
       tokens: AuthTokens(
         accessToken: tokens.accessToken,
@@ -82,8 +80,7 @@ class DefaultAuthRepository implements AuthRepository {
 
     if (!session.isAuthenticated) {
       try {
-        final refreshed = await refreshSession();
-        return refreshed;
+        return await refreshSession();
       } catch (_) {
         await _sessionStore.clear();
         return null;
@@ -93,15 +90,17 @@ class DefaultAuthRepository implements AuthRepository {
     try {
       final profile = await _api.me(session.tokens.accessToken);
       final updated = session.copyWith(
-        user: session.user.copyWith(displayPhone: profile.phone),
+        user: session.user.copyWith(
+          username: profile.username,
+          displayName: profile.displayName,
+        ),
       );
       await _sessionStore.write(updated);
       return updated;
     } catch (error) {
       if (error is ApiException && error.isUnauthorized) {
         try {
-          final refreshed = await refreshSession();
-          return refreshed;
+          return await refreshSession();
         } catch (_) {
           await _sessionStore.clear();
           return null;
@@ -110,9 +109,6 @@ class DefaultAuthRepository implements AuthRepository {
       return session;
     }
   }
-
-  @override
-  Future<SendCodeResponse> sendCode(String phone) => _api.sendCode(phone);
 
   @override
   Future<AuthSession> refreshSession() async {
@@ -125,7 +121,12 @@ class DefaultAuthRepository implements AuthRepository {
       refreshToken: session.tokens.refreshToken,
       deviceId: await _deviceId(),
     );
+    final profile = await _api.me(tokens.accessToken);
     final refreshed = session.copyWith(
+      user: session.user.copyWith(
+        username: profile.username,
+        displayName: profile.displayName,
+      ),
       tokens: AuthTokens(
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,

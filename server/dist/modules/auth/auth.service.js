@@ -50,75 +50,46 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
-const bcrypt = __importStar(require("bcryptjs"));
 const crypto = __importStar(require("crypto"));
 const typeorm_2 = require("typeorm");
-const app_exception_1 = require("../../common/exceptions/app.exception");
 const error_codes_1 = require("../../common/constants/error-codes");
-const sms_service_1 = require("../sms/sms.service");
-const user_service_1 = require("../user/user.service");
+const app_exception_1 = require("../../common/exceptions/app.exception");
+const account_service_1 = require("../account/account.service");
+const account_refresh_token_entity_1 = require("../account/entities/account-refresh-token.entity");
 const rate_limit_service_1 = require("../rate-limit/rate-limit.service");
-const user_entity_1 = require("../user/entities/user.entity");
-const auth_code_entity_1 = require("./entities/auth-code.entity");
-const refresh_token_entity_1 = require("./entities/refresh-token.entity");
 let AuthService = class AuthService {
-    smsService;
-    userService;
+    accountService;
     rateLimitService;
     jwtService;
     configService;
-    authCodesRepository;
     refreshTokensRepository;
-    constructor(smsService, userService, rateLimitService, jwtService, configService, authCodesRepository, refreshTokensRepository) {
-        this.smsService = smsService;
-        this.userService = userService;
+    constructor(accountService, rateLimitService, jwtService, configService, refreshTokensRepository) {
+        this.accountService = accountService;
         this.rateLimitService = rateLimitService;
         this.jwtService = jwtService;
         this.configService = configService;
-        this.authCodesRepository = authCodesRepository;
         this.refreshTokensRepository = refreshTokensRepository;
     }
-    async sendCode(phone, ip) {
-        await this.rateLimitService.checkSendCode(phone, ip);
-        const code = this.resolveCodeForCurrentEnvironment();
-        const codeHash = await bcrypt.hash(code, 10);
-        await this.authCodesRepository.save(this.authCodesRepository.create({
-            phone,
-            codeHash,
-            expiredAt: new Date(Date.now() + 5 * 60 * 1000),
-            usedAt: null,
-            sendIp: ip,
-        }));
-        await this.smsService.send(phone, code);
-        return { cooldown: 60 };
+    async loginWithRole(username, password, deviceId, role) {
+        const loginKey = username.trim().toLowerCase();
+        try {
+            const account = await this.accountService.validateCredentials(loginKey, password, role);
+            await this.accountService.touchLastLoginAt(account.id);
+            await this.rateLimitService.resetFailedAttempts(loginKey);
+            return this.issueTokens(account.id, account.username, deviceId, role);
+        }
+        catch (error) {
+            if (error instanceof app_exception_1.AppException &&
+                error.code === error_codes_1.ErrorCode.ACCOUNT_CREDENTIALS_INVALID) {
+                await this.rateLimitService.recordFailedAttempt(loginKey);
+            }
+            throw error;
+        }
     }
-    async login(phone, code, deviceId) {
-        const authCode = await this.authCodesRepository.findOne({
-            where: { phone, usedAt: (0, typeorm_2.IsNull)() },
-            order: { createdAt: 'DESC' },
-        });
-        if (!authCode || authCode.expiredAt.getTime() < Date.now()) {
-            throw new app_exception_1.AppException(error_codes_1.ErrorCode.CODE_EXPIRED, '验证码已过期', 401);
-        }
-        const matched = await bcrypt.compare(code, authCode.codeHash);
-        if (!matched) {
-            await this.rateLimitService.recordFailedAttempt(phone);
-            throw new app_exception_1.AppException(error_codes_1.ErrorCode.CODE_WRONG, '验证码错误', 401);
-        }
-        authCode.usedAt = new Date();
-        await this.authCodesRepository.save(authCode);
-        const user = await this.userService.findOrCreate(phone);
-        if (user.status !== user_entity_1.UserStatus.Active) {
-            throw new app_exception_1.AppException(error_codes_1.ErrorCode.ACCOUNT_BANNED, '账户已被封禁', 403);
-        }
-        await this.userService.touchLastLoginAt(user.id);
-        await this.rateLimitService.resetFailedAttempts(phone);
-        return this.issueTokens(user.id, deviceId);
-    }
-    async refresh(refreshToken, deviceId) {
+    async refreshWithRole(refreshToken, deviceId, role) {
         const tokenHash = this.hashToken(refreshToken);
         const stored = await this.refreshTokensRepository.findOne({
-            where: { tokenHash, revokedAt: (0, typeorm_2.IsNull)() },
+            where: { tokenHash, revokedAt: (0, typeorm_2.IsNull)(), role },
             order: { createdAt: 'DESC' },
         });
         if (!stored || stored.expiredAt.getTime() < Date.now()) {
@@ -129,12 +100,22 @@ let AuthService = class AuthService {
         }
         stored.revokedAt = new Date();
         await this.refreshTokensRepository.save(stored);
-        return this.issueTokens(stored.userId, deviceId);
+        const account = await this.accountService.findById(stored.accountId);
+        if (!account) {
+            throw new app_exception_1.AppException(error_codes_1.ErrorCode.REFRESH_TOKEN_INVALID, 'Refresh Token 无效或已过期', 401);
+        }
+        if (account.status === 'disabled') {
+            throw new app_exception_1.AppException(error_codes_1.ErrorCode.ACCOUNT_DISABLED, '账号已停用', 403);
+        }
+        if (account.status === 'banned') {
+            throw new app_exception_1.AppException(error_codes_1.ErrorCode.ACCOUNT_BANNED, '账号已被封禁', 403);
+        }
+        return this.issueTokens(account.id, account.username, deviceId, role);
     }
-    async logout(userId, refreshToken) {
+    async logoutWithRole(accountId, refreshToken, role) {
         const tokenHash = this.hashToken(refreshToken);
         const stored = await this.refreshTokensRepository.findOne({
-            where: { userId, tokenHash, revokedAt: (0, typeorm_2.IsNull)() },
+            where: { accountId, tokenHash, role, revokedAt: (0, typeorm_2.IsNull)() },
         });
         if (!stored) {
             throw new app_exception_1.AppException(error_codes_1.ErrorCode.REFRESH_TOKEN_INVALID, 'Refresh Token 无效或已过期', 401);
@@ -142,24 +123,25 @@ let AuthService = class AuthService {
         stored.revokedAt = new Date();
         await this.refreshTokensRepository.save(stored);
     }
-    async me(userId) {
-        const profile = await this.userService.getPublicProfile(userId);
+    async me(accountId) {
+        const profile = await this.accountService.getProfile(accountId);
         if (!profile) {
             throw new common_1.UnauthorizedException();
         }
         return profile;
     }
-    async issueTokens(userId, deviceId) {
-        const expiresInText = this.configService.get('JWT_ACCESS_EXPIRES', '2h');
-        const refreshDays = Number(this.configService.get('JWT_REFRESH_DAYS', '30'));
-        const accessToken = this.jwtService.sign({ sub: userId, deviceId }, {
-            secret: this.configService.get('JWT_SECRET', 'replace-me'),
+    async issueTokens(accountId, username, deviceId, role) {
+        const expiresInText = this.resolveAccessExpires(role);
+        const refreshDays = this.resolveRefreshDays(role);
+        const accessToken = this.jwtService.sign({ sub: accountId, username, role, deviceId }, {
+            secret: this.resolveJwtSecret(role),
             expiresIn: expiresInText,
         });
         const refreshToken = crypto.randomBytes(32).toString('hex');
         const tokenHash = this.hashToken(refreshToken);
         await this.refreshTokensRepository.save(this.refreshTokensRepository.create({
-            userId,
+            accountId,
+            role,
             tokenHash,
             deviceId,
             expiredAt: new Date(Date.now() + refreshDays * 24 * 60 * 60 * 1000),
@@ -168,28 +150,26 @@ let AuthService = class AuthService {
         const expiresIn = this.parseExpiresInSeconds(expiresInText);
         return { accessToken, refreshToken, expiresIn };
     }
-    generateCode() {
-        return crypto.randomInt(100000, 999999).toString();
-    }
-    resolveCodeForCurrentEnvironment() {
-        if (this.isFixedCodeFlowEnabled()) {
-            return this.normalizeFixedCode(this.configService.get('AUTH_FIXED_CODE', '123456'));
-        }
-        return this.generateCode();
-    }
-    isFixedCodeFlowEnabled() {
-        const nodeEnv = this.configService.get('NODE_ENV', 'development');
-        const smsProvider = this.configService.get('SMS_PROVIDER', 'noop');
-        return nodeEnv !== 'production' && smsProvider === 'noop';
-    }
-    normalizeFixedCode(value) {
-        if (/^\d{6}$/.test(value)) {
-            return value;
-        }
-        return '123456';
-    }
     hashToken(token) {
         return crypto.createHash('sha256').update(token).digest('hex');
+    }
+    resolveJwtSecret(role) {
+        if (role === account_service_1.AccountRole.Admin) {
+            return this.configService.get('ADMIN_JWT_SECRET', this.configService.get('JWT_SECRET', 'replace-me'));
+        }
+        return this.configService.get('JWT_SECRET', 'replace-me');
+    }
+    resolveAccessExpires(role) {
+        if (role === account_service_1.AccountRole.Admin) {
+            return this.configService.get('ADMIN_JWT_ACCESS_EXPIRES', '2h');
+        }
+        return this.configService.get('JWT_ACCESS_EXPIRES', '2h');
+    }
+    resolveRefreshDays(role) {
+        if (role === account_service_1.AccountRole.Admin) {
+            return Number(this.configService.get('ADMIN_JWT_REFRESH_DAYS', '30'));
+        }
+        return Number(this.configService.get('JWT_REFRESH_DAYS', '30'));
     }
     parseExpiresInSeconds(value) {
         if (value.endsWith('h')) {
@@ -208,13 +188,10 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __param(5, (0, typeorm_1.InjectRepository)(auth_code_entity_1.AuthCodeEntity)),
-    __param(6, (0, typeorm_1.InjectRepository)(refresh_token_entity_1.RefreshTokenEntity)),
-    __metadata("design:paramtypes", [sms_service_1.SmsService,
-        user_service_1.UserService,
+    __param(4, (0, typeorm_1.InjectRepository)(account_refresh_token_entity_1.AccountRefreshTokenEntity)),
+    __metadata("design:paramtypes", [account_service_1.AccountService,
         rate_limit_service_1.RateLimitService,
         jwt_1.JwtService,
         config_1.ConfigService,
-        typeorm_2.Repository,
         typeorm_2.Repository])
 ], AuthService);

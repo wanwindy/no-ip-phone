@@ -1,0 +1,56 @@
+=3000 : 无法将“=3000”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正
+确，然后再试一次。
+所在位置 行:1 字符: 1
++ ='3000'; ='admin'; ='Admin12345'; ='系统管理员'; ='demo_user'; ='Demo12345 ...
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=3000:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+=admin : 无法将“=admin”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径
+正确，然后再试一次。
+所在位置 行:1 字符: 10
++ ='3000'; ='admin'; ='Admin12345'; ='系统管理员'; ='demo_user'; ='Demo12345 ...
++          ~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=admin:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+=Admin12345 : 无法将“=Admin12345”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，
+请确保路径正确，然后再试一次。
+所在位置 行:1 字符: 20
++ ='3000'; ='admin'; ='Admin12345'; ='系统管理员'; ='demo_user'; ='Demo12345 ...
++                    ~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=Admin12345:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+=系统管理员 : 无法将“=系统管理员”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，
+请确保路径正确，然后再试一次。
+所在位置 行:1 字符: 35
++ ='3000'; ='admin'; ='Admin12345'; ='系统管理员'; ='demo_user'; ='Demo12345 ...
++                                   ~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=系统管理员:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+=demo_user : 无法将“=demo_user”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请
+确保路径正确，然后再试一次。
+所在位置 行:1 字符: 45
++ ='3000'; ='admin'; ='Admin12345'; ='系统管理员'; ='demo_user'; ='Demo12345 ...
++                                             ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=demo_user:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+=Demo12345 : 无法将“=Demo12345”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请
+确保路径正确，然后再试一次。
+所在位置 行:1 字符: 59
++ ... ='admin'; ='Admin12345'; ='系统管理员'; ='demo_user'; ='Demo12345'; ='演示账号 ...
++                                                      ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=Demo12345:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+=演示账号 : 无法将“=演示账号”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确
+保路径正确，然后再试一次。
+所在位置 行:1 字符: 73
++ ...  ='Admin12345'; ='系统管理员'; ='demo_user'; ='Demo12345'; ='演示账号'; node d ...
++                                                           ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=演示账号:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 

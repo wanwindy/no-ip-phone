@@ -12,20 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginDto = void 0;
 const class_validator_1 = require("class-validator");
 class LoginDto {
-    phone;
-    code;
+    username;
+    password;
     deviceId;
 }
 exports.LoginDto = LoginDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], LoginDto.prototype, "phone", void 0);
+], LoginDto.prototype, "username", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Matches)(/^\d{6}$/, { message: 'code must be a 6 digit string' }),
     __metadata("design:type", String)
-], LoginDto.prototype, "code", void 0);
+], LoginDto.prototype, "password", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)

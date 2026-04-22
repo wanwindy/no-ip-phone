@@ -45,7 +45,7 @@ let RateLimitService = class RateLimitService {
     async recordFailedAttempt(phone) {
         const count = await this.store.increment(`login:failed:${phone}`, RateLimitService_1.LOGIN_FAILED_LIMIT_MS);
         if (count >= RateLimitService_1.LOGIN_FAILED_LIMIT) {
-            throw new common_1.HttpException('验证码错误次数过多，请 30 分钟后再试', common_1.HttpStatus.TOO_MANY_REQUESTS);
+            throw new common_1.HttpException('账号或密码错误次数过多，请 30 分钟后再试', common_1.HttpStatus.TOO_MANY_REQUESTS);
         }
     }
     async resetFailedAttempts(phone) {

@@ -12,12 +12,11 @@ const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const passport_1 = require("@nestjs/passport");
 const typeorm_1 = require("@nestjs/typeorm");
-const sms_module_1 = require("../sms/sms.module");
 const rate_limit_module_1 = require("../rate-limit/rate-limit.module");
-const user_module_1 = require("../user/user.module");
+const account_module_1 = require("../account/account.module");
+const account_refresh_token_entity_1 = require("../account/entities/account-refresh-token.entity");
+const tenant_module_1 = require("../tenant/tenant.module");
 const auth_controller_1 = require("./auth.controller");
-const auth_code_entity_1 = require("./entities/auth-code.entity");
-const refresh_token_entity_1 = require("./entities/refresh-token.entity");
 const auth_service_1 = require("./auth.service");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
 let AuthModule = class AuthModule {
@@ -37,10 +36,10 @@ exports.AuthModule = AuthModule = __decorate([
                     },
                 }),
             }),
-            typeorm_1.TypeOrmModule.forFeature([auth_code_entity_1.AuthCodeEntity, refresh_token_entity_1.RefreshTokenEntity]),
-            user_module_1.UserModule,
-            sms_module_1.SmsModule,
+            typeorm_1.TypeOrmModule.forFeature([account_refresh_token_entity_1.AccountRefreshTokenEntity]),
+            account_module_1.AccountModule,
             rate_limit_module_1.RateLimitModule,
+            tenant_module_1.TenantModule,
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],

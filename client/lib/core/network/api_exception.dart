@@ -25,11 +25,15 @@ class ApiCodes {
   static const int success = 0;
   static const int invalidPhone = 40001;
   static const int invalidCode = 40002;
+  static const int invalidUsername = 40003;
+  static const int invalidPassword = 40004;
   static const int codeWrong = 40101;
   static const int codeExpired = 40102;
   static const int accessTokenInvalid = 40103;
   static const int refreshTokenInvalid = 40104;
+  static const int credentialsInvalid = 40105;
   static const int accountBlocked = 40301;
+  static const int accountDisabled = 40302;
   static const int sendCodeRateLimited = 42901;
   static const int codeAttemptsExceeded = 42902;
   static const int ipRateLimited = 42903;
@@ -51,6 +55,10 @@ String apiErrorMessage({
       return '手机号格式不正确';
     case ApiCodes.invalidCode:
       return '验证码格式不正确';
+    case ApiCodes.invalidUsername:
+      return '账号名格式不正确';
+    case ApiCodes.invalidPassword:
+      return '密码格式不正确';
     case ApiCodes.codeWrong:
       return '验证码错误';
     case ApiCodes.codeExpired:
@@ -59,16 +67,20 @@ String apiErrorMessage({
       return '登录态已失效，请重新登录';
     case ApiCodes.refreshTokenInvalid:
       return '登录态已过期，请重新登录';
+    case ApiCodes.credentialsInvalid:
+      return '账号或密码错误';
     case ApiCodes.accountBlocked:
       return '账号已被封禁';
+    case ApiCodes.accountDisabled:
+      return '账号已停用';
     case ApiCodes.sendCodeRateLimited:
-      return '验证码发送过于频繁，请稍后再试';
+      return '请求过于频繁，请稍后再试';
     case ApiCodes.codeAttemptsExceeded:
-      return '验证码错误次数过多，请稍后再试';
+      return '账号或密码错误次数过多，请稍后再试';
     case ApiCodes.ipRateLimited:
       return '当前网络请求过于频繁，请稍后再试';
     case ApiCodes.smsFailed:
-      return '验证码发送失败，请稍后重试';
+      return '请求失败，请稍后重试';
     case ApiCodes.internalError:
       return '服务暂时不可用，请稍后重试';
     default:

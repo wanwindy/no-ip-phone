@@ -12,6 +12,7 @@ import '../../auth/providers/auth_controller.dart';
 import '../../config/providers/config_controller.dart';
 import '../../settings/providers/settings_controller.dart';
 import '../data/dial_history_repository.dart';
+import '../domain/dial_mode.dart';
 import '../domain/dial_plan.dart';
 import '../providers/dialer_controller.dart';
 
@@ -24,10 +25,12 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _tenantController = TextEditingController();
 
   @override
   void dispose() {
     _phoneController.dispose();
+    _tenantController.dispose();
     super.dispose();
   }
 
@@ -128,7 +131,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Future<void> _dial(bool privateDial) async {
-    if (privateDial && !await _confirmPrivateDial()) {
+    final selectedMode = ref.read(dialControllerProvider).selectedMode;
+    if (selectedMode == DialMode.directPrefixMode &&
+        privateDial &&
+        !await _confirmPrivateDial()) {
       return;
     }
 
@@ -136,6 +142,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final result = await controller.dial(
       rawNumber: _phoneController.text,
       privateDial: privateDial,
+      selectedTenantId: _tenantController.text,
     );
 
     if (!mounted) {
@@ -144,19 +151,33 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     final messenger = ScaffoldMessenger.of(context);
     if (result != null) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            privateDial
-                ? '已调起隐私拨号：${result.dialString}'
-                : '已调起普通拨号：${result.dialString}',
+      if (selectedMode == DialMode.serverOrchestratedMode) {
+        final task = result.taskSnapshot;
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              task == null
+                  ? '已提交平台外呼任务'
+                  : '已创建外呼任务：${task.status} · 租户 ${task.tenantId} · 当前 DID ${task.currentDidLabel}',
+            ),
+            duration: const Duration(seconds: 4),
           ),
-          action: SnackBarAction(
-            label: '反馈兼容',
-            onPressed: () => _showLaunchFeedback(result),
+        );
+      } else {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              privateDial
+                  ? '已调起隐私拨号：${result.plan.dialString}'
+                  : '已调起普通拨号：${result.plan.dialString}',
+            ),
+            action: SnackBarAction(
+              label: '反馈兼容',
+              onPressed: () => _showLaunchFeedback(result.plan),
+            ),
           ),
-        ),
-      );
+        );
+      }
     } else {
       messenger.showSnackBar(
         SnackBar(
@@ -171,7 +192,50 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   Future<void> _redialFromHistory(RecentDialEntry entry) async {
     _fillPhoneNumber(entry.phoneNumber);
-    await _dial(entry.isPrivateDial);
+    ref.read(dialControllerProvider.notifier).selectMode(entry.mode);
+    await _dial(entry.mode == DialMode.directPrefixMode && entry.isPrivateDial);
+  }
+
+  Future<void> _refreshActiveTaskStatus() async {
+    final refreshed = await ref
+        .read(dialControllerProvider.notifier)
+        .refreshActiveTaskStatus();
+    if (!mounted) {
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+    if (refreshed != null) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            '已刷新任务状态：${refreshed.status} · 最新事件 ${refreshed.latestEventDisplay}',
+          ),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(ref.read(dialControllerProvider).errorMessage ?? '刷新失败'),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  String _formatTaskDateTime(DateTime? value) {
+    if (value == null) {
+      return '待服务端补充';
+    }
+
+    final local = value.toLocal();
+    final month = local.month.toString().padLeft(2, '0');
+    final day = local.day.toString().padLeft(2, '0');
+    final hour = local.hour.toString().padLeft(2, '0');
+    final minute = local.minute.toString().padLeft(2, '0');
+    return '$month-$day $hour:$minute';
   }
 
   @override
@@ -180,6 +244,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final dialState = ref.watch(dialControllerProvider);
     final settingsState = ref.watch(settingsControllerProvider);
     final configState = ref.watch(configControllerProvider);
+    final isDirectMode = dialState.selectedMode == DialMode.directPrefixMode;
 
     return AppBackground(
       child: Scaffold(
@@ -200,6 +265,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                 context.go(value);
               },
               itemBuilder: (context) => const [
+                PopupMenuItem(
+                  value: AppConstants.adminDashboardPath,
+                  child: Text('管理后台'),
+                ),
                 PopupMenuItem(value: AppConstants.aboutPath, child: Text('关于')),
               ],
             ),
@@ -213,16 +282,47 @@ class _HomePageState extends ConsumerState<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '你好，${authState.session?.user.displayPhone ?? '未登录'}',
+                    '你好，${authState.session?.user.displayName ?? '未登录'}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Text('当前默认前缀：${settingsState.settings.defaultDialPrefix}'),
+                  Text('当前拨号模式：${dialState.selectedMode.label}'),
                   const SizedBox(height: 8),
                   Text(
-                    '真机验证时请先记下当前前缀；我们只会尝试拉起系统拨号器，是否真正隐藏来电显示仍需人工确认。',
+                    dialState.selectedMode.description,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: DialMode.values
+                        .map(
+                          (mode) => ChoiceChip(
+                            label: Text(mode.label),
+                            selected: dialState.selectedMode == mode,
+                            onSelected: (_) => ref
+                                .read(dialControllerProvider.notifier)
+                                .selectMode(mode),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  if (isDirectMode) ...[
+                    const SizedBox(height: 8),
+                    Text('当前默认前缀：${settingsState.settings.defaultDialPrefix}'),
+                    const SizedBox(height: 8),
+                    Text(
+                      '真机验证时请先记下当前前缀；我们只会尝试拉起系统拨号器，是否真正隐藏来电显示仍需人工确认。',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      '当前服务端编排已接入持久化任务骨架；可返回租户、当前 DID、回拨目标、回拨窗口和最新事件，并通过查询接口刷新状态。',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -231,12 +331,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                       TextButton.icon(
                         onPressed: () => context.go(AppConstants.settingsPath),
                         icon: const Icon(Icons.tune_outlined),
-                        label: const Text('检查前缀与回退'),
+                        label: Text(isDirectMode ? '检查前缀与回退' : '查看兼容回退'),
                       ),
                       TextButton.icon(
                         onPressed: () => context.go(AppConstants.helpPath),
                         icon: const Icon(Icons.help_outline),
-                        label: const Text('查看验证边界'),
+                        label: Text(isDirectMode ? '查看验证边界' : '查看平台说明'),
                       ),
                     ],
                   ),
@@ -247,7 +347,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
-                  if (configState.errorMessage != null) ...[
+                  if (isDirectMode && configState.errorMessage != null) ...[
                     const SizedBox(height: 8),
                     Text(
                       '前缀配置暂时没有刷新成功，请先到设置页使用“恢复默认前缀”，再重试隐私拨打；普通拨打仍可作为回退路径。',
@@ -271,52 +371,154 @@ class _HomePageState extends ConsumerState<HomePage> {
                     keyboardType: TextInputType.phone,
                     prefixIcon: Icons.dialpad_outlined,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '普通拨打：${formatDialPreview(prefix: '', phoneNumber: _phoneController.text.isEmpty ? '13800138000' : _phoneController.text)}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  Text(
-                    '隐私拨打：${formatDialPreview(prefix: settingsState.settings.defaultDialPrefix, phoneNumber: _phoneController.text.isEmpty ? '13800138000' : _phoneController.text)}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '失败时请先检查号码格式、系统默认电话应用和当前前缀；隐私拨打失败时，普通拨打始终可以作为回退路径。',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppPrimaryButton(
-                          label: '普通拨打',
-                          icon: Icons.call_outlined,
-                          isLoading: dialState.isDialing,
-                          onPressed: () => _dial(false),
+                  if (isDirectMode) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      '普通拨打：${formatDialPreview(prefix: '', phoneNumber: _phoneController.text.isEmpty ? '13800138000' : _phoneController.text)}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      '隐私拨打：${formatDialPreview(prefix: settingsState.settings.defaultDialPrefix, phoneNumber: _phoneController.text.isEmpty ? '13800138000' : _phoneController.text)}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '失败时请先检查号码格式、系统默认电话应用和当前前缀；隐私拨打失败时，普通拨打始终可以作为回退路径。',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AppPrimaryButton(
+                            label: '普通拨打',
+                            icon: Icons.call_outlined,
+                            isLoading: dialState.isDialing,
+                            onPressed: () => _dial(false),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: AppPrimaryButton(
-                          label: '隐私拨打',
-                          icon: Icons.shield_outlined,
-                          isLoading: dialState.isDialing,
-                          onPressed: () => _dial(true),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: AppPrimaryButton(
+                            label: '隐私拨打',
+                            icon: Icons.shield_outlined,
+                            isLoading: dialState.isDialing,
+                            onPressed: () => _dial(true),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 8),
+                    AppTextField(
+                      controller: _tenantController,
+                      label: '租户 ID（可选）',
+                      hintText: '留空使用默认租户；双租户 QA 可显式填写',
+                      keyboardType: TextInputType.text,
+                      prefixIcon: Icons.apartment_outlined,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '平台编排模式会向服务端提交 `POST /calls/outbound`，并在填写租户 ID 时通过同一 `X-Tenant-Id` 头显式选择租户上下文。',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '当前输入号码：${normalizePhoneNumber(_phoneController.text.isEmpty ? '13800138000' : _phoneController.text)}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 16),
+                    AppPrimaryButton(
+                      label: '发起平台外呼',
+                      icon: Icons.hub_outlined,
+                      isLoading: dialState.isDialing,
+                      onPressed: () => _dial(false),
+                    ),
+                  ],
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TextButton(
                       onPressed: () => context.go(AppConstants.helpPath),
-                      child: const Text('查看回退路径、验证边界和反馈建议'),
+                      child: Text(
+                        isDirectMode ? '查看回退路径、验证边界和反馈建议' : '查看平台编排说明与兼容回退路径',
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+            if (dialState.activeTask != null) ...[
+              const SizedBox(height: 16),
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '平台外呼任务',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text('任务状态：${dialState.activeTask!.status}'),
+                    const SizedBox(height: 8),
+                    Text('当前 DID：${dialState.activeTask!.currentDidLabel}'),
+                    const SizedBox(height: 8),
+                    Text(
+                      '回拨窗口状态：${dialState.activeTask!.callbackStatus ?? '未建立'}',
+                    ),
+                    const SizedBox(height: 8),
+                    Text('租户 ID：${dialState.activeTask!.tenantId}'),
+                    const SizedBox(height: 8),
+                    Text('回拨目标：${dialState.activeTask!.targetEndpointDisplay}'),
+                    const SizedBox(height: 8),
+                    Text(
+                      '回拨有效期：${_formatTaskDateTime(dialState.activeTask!.callbackExpiresAt)}',
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '任务创建时间：${_formatTaskDateTime(dialState.activeTask!.createdAt)}',
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '状态更新时间：${_formatTaskDateTime(dialState.activeTask!.updatedAt)}',
+                    ),
+                    const SizedBox(height: 8),
+                    Text('最新事件：${dialState.activeTask!.latestEventDisplay}'),
+                    const SizedBox(height: 8),
+                    Text(
+                      '事件时间：${_formatTaskDateTime(dialState.activeTask!.latestEventAt)}',
+                    ),
+                    if ((dialState.activeTask!.note ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        dialState.activeTask!.note!,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: dialState.isRefreshingTask
+                            ? null
+                            : _refreshActiveTaskStatus,
+                        icon: dialState.isRefreshingTask
+                            ? const SizedBox(
+                                height: 16,
+                                width: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.refresh_outlined),
+                        label: Text(
+                          dialState.isRefreshingTask ? '刷新中...' : '刷新任务状态',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
             AppCard(
               child: Column(
@@ -355,15 +557,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                         },
                         contentPadding: EdgeInsets.zero,
                         leading: Icon(
-                          entry.isPrivateDial
+                          entry.mode == DialMode.serverOrchestratedMode
+                              ? Icons.hub_outlined
+                              : entry.isPrivateDial
                               ? Icons.visibility_off_outlined
                               : Icons.phone_outlined,
                         ),
                         title: Text(entry.displayNumber),
                         subtitle: Text(
-                          entry.isPrivateDial
-                              ? '隐私拨打 · 点击回填号码'
-                              : '普通拨打 · 点击回填号码',
+                          entry.mode == DialMode.serverOrchestratedMode
+                              ? '平台编排 · 点击回填号码'
+                              : entry.isPrivateDial
+                              ? '兼容直拨 · 隐私拨打 · 点击回填号码'
+                              : '兼容直拨 · 普通拨打 · 点击回填号码',
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.refresh_outlined),

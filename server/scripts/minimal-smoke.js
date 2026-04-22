@@ -29,23 +29,8 @@ function resolveBaseUrl() {
   return `http://127.0.0.1:${port}`;
 }
 
-function resolveSmokeCode() {
-  const explicit = normalize(process.env.SMOKE_AUTH_CODE);
-  if (explicit) {
-    return explicit;
-  }
-
-  const nodeEnv = normalize(process.env.NODE_ENV, 'development').toLowerCase();
-  if (nodeEnv !== 'production') {
-    return normalize(process.env.AUTH_FIXED_CODE, '123456');
-  }
-
-  return '';
-}
-
 async function request(method, pathName, body, accessToken) {
-  const baseUrl = resolveBaseUrl();
-  const response = await fetch(`${baseUrl}${pathName}`, {
+  const response = await fetch(`${resolveBaseUrl()}${pathName}`, {
     method,
     headers: {
       'content-type': 'application/json',
@@ -69,27 +54,30 @@ async function request(method, pathName, body, accessToken) {
 }
 
 async function main() {
-  const code = resolveSmokeCode();
-  if (!/^\d{6}$/.test(code)) {
-    throw new Error(
-      'Smoke auth code is unavailable. Set SMOKE_AUTH_CODE=6digit, or in non-production keep AUTH_FIXED_CODE. Production-like smoke must use a real SMS code from the configured provider.',
-    );
-  }
-
-  const phone = normalize(process.env.SMOKE_PHONE, '13900001061');
+  const username = normalize(
+    process.env.SMOKE_USERNAME,
+    process.env.APP_BOOTSTRAP_USERNAME || 'demo_user',
+  );
+  const password = normalize(
+    process.env.SMOKE_PASSWORD,
+    process.env.APP_BOOTSTRAP_PASSWORD || 'Demo12345',
+  );
   const deviceId = normalize(
     process.env.SMOKE_DEVICE_ID,
     `round4-smoke-${Date.now()}`,
   );
   const countryCode = normalize(process.env.SMOKE_COUNTRY_CODE, 'CN');
 
-  console.log(`[step] send-code ${phone}`);
-  await request('POST', '/api/v1/auth/send-code', { phone });
+  if (!username || !password) {
+    throw new Error(
+      'Smoke credentials are unavailable. Set SMOKE_USERNAME/SMOKE_PASSWORD or APP_BOOTSTRAP_USERNAME/APP_BOOTSTRAP_PASSWORD.',
+    );
+  }
 
-  console.log('[step] login');
+  console.log(`[step] login ${username}`);
   const loginData = await request('POST', '/api/v1/auth/login', {
-    phone,
-    code,
+    username,
+    password,
     deviceId,
   });
 
@@ -121,7 +109,7 @@ async function main() {
     refreshData.accessToken,
   );
 
-  console.log(`[ok] Minimal smoke passed for ${meData.phone} via ${resolveBaseUrl()}`);
+  console.log(`[ok] Minimal smoke passed for ${meData.username} via ${resolveBaseUrl()}`);
 }
 
 main().catch((error) => {

@@ -1,0 +1,20 @@
+{
+  "event_name": "telephony.recording.ready",
+  "event_direction": "internal",
+  "provider_key": "provider-au-01",
+  "trunk_key": "au-outbound-01",
+  "provider_event_id": "evt_rec_0001",
+  "provider_call_id": "provcall_out_0001",
+  "occurred_at": "2026-04-22T10:30:00Z",
+  "session_direction": "outbound",
+  "trace_id": "trace_r5r3_out_0001",
+  "tenant_ref": "tenant_alpha",
+  "call_session_ref": "44444444-4444-4444-8444-444444444444",
+  "display_did": "+617676021983",
+  "remote_number": "+8613812345678",
+  "recording_id": "rec_r5r3_0001",
+  "recording_scope": "mixed",
+  "recording_url": "https://fixtures.invalid/recordings/rec_r5r3_0001.wav",
+  "duration_sec": 180,
+  "checksum_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

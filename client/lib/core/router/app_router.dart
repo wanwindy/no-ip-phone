@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/providers/admin_auth_controller.dart';
+import '../../features/admin/ui/admin_dashboard_page.dart';
+import '../../features/admin/ui/admin_login_page.dart';
 import '../../features/auth/providers/auth_controller.dart';
 import '../../features/auth/ui/login_page.dart';
-import '../../features/auth/ui/verify_code_page.dart';
 import '../../features/dialer/ui/home_page.dart';
 import '../../features/help/ui/about_page.dart';
 import '../../features/help/ui/help_page.dart';
@@ -14,6 +16,7 @@ import '../constants/app_constants.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
+  final adminAuthState = ref.watch(adminAuthControllerProvider);
   final startupState = ref.watch(startupControllerProvider);
 
   return GoRouter(
@@ -29,8 +32,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: AppConstants.verifyPath,
-        builder: (context, state) => const VerifyCodePage(),
+        path: AppConstants.adminLoginPath,
+        builder: (context, state) => const AdminLoginPage(),
+      ),
+      GoRoute(
+        path: AppConstants.adminDashboardPath,
+        builder: (context, state) => const AdminDashboardPage(),
       ),
       GoRoute(
         path: AppConstants.homePath,
@@ -51,31 +58,43 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
     redirect: (context, state) {
       final location = state.matchedLocation;
+      final isAdminRoute = location == AppConstants.adminLoginPath ||
+          location == AppConstants.adminDashboardPath;
       final isPublicRoute = <String>{
         AppConstants.splashPath,
         AppConstants.loginPath,
-        AppConstants.verifyPath,
+        AppConstants.adminLoginPath,
         AppConstants.helpPath,
         AppConstants.aboutPath,
       }.contains(location);
 
       if (startupState.status != StartupStatus.ready ||
-          authState.status == AuthStatus.booting) {
+          authState.status == AuthStatus.booting ||
+          adminAuthState.status == AdminAuthStatus.booting) {
         return location == AppConstants.splashPath ? null : AppConstants.splashPath;
+      }
+
+      if (isAdminRoute) {
+        if (adminAuthState.isAuthenticated &&
+            location == AppConstants.adminLoginPath) {
+          return AppConstants.adminDashboardPath;
+        }
+
+        if (!adminAuthState.isAuthenticated &&
+            location == AppConstants.adminDashboardPath) {
+          return AppConstants.adminLoginPath;
+        }
+
+        return null;
       }
 
       if (authState.isAuthenticated &&
           (location == AppConstants.loginPath ||
-              location == AppConstants.verifyPath ||
               location == AppConstants.splashPath)) {
         return AppConstants.homePath;
       }
 
       if (!authState.isAuthenticated) {
-        if (location == AppConstants.verifyPath &&
-            (authState.pendingPhone == null || authState.pendingPhone!.isEmpty)) {
-          return AppConstants.loginPath;
-        }
         if (!isPublicRoute) {
           return AppConstants.loginPath;
         }

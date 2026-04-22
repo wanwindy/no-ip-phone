@@ -1,15 +1,4 @@
 import '../../../core/constants/app_constants.dart';
-import '../../../shared/utils/phone_utils.dart';
-
-class SendCodeResponse {
-  const SendCodeResponse({
-    required this.cooldownSeconds,
-    this.mockCode,
-  });
-
-  final int cooldownSeconds;
-  final String? mockCode;
-}
 
 class AuthTokenPair {
   const AuthTokenPair({
@@ -28,25 +17,25 @@ class AuthTokenPair {
 class AuthProfile {
   const AuthProfile({
     required this.id,
-    required this.phone,
+    required this.username,
+    required this.displayName,
+    required this.role,
     required this.status,
     required this.createdAt,
   });
 
   final String id;
-  final String phone;
+  final String username;
+  final String displayName;
+  final String role;
   final String status;
   final DateTime createdAt;
-
-  String get displayPhone => phone;
 }
 
 abstract class AuthApi {
-  Future<SendCodeResponse> sendCode(String phone);
-
   Future<AuthTokenPair> login({
-    required String phone,
-    required String code,
+    required String username,
+    required String password,
     required String deviceId,
   });
 
@@ -61,24 +50,24 @@ abstract class AuthApi {
 }
 
 class MockAuthApi implements AuthApi {
-  final Map<String, String> _accessTokenPhoneMap = <String, String>{};
-  final Map<String, String> _refreshTokenPhoneMap = <String, String>{};
+  final Map<String, String> _accessTokenUserMap = <String, String>{};
+  final Map<String, String> _refreshTokenUserMap = <String, String>{};
 
   @override
   Future<AuthTokenPair> login({
-    required String phone,
-    required String code,
+    required String username,
+    required String password,
     required String deviceId,
   }) async {
-    if (code != AppConstants.mockVerificationCode) {
-      throw StateError('验证码错误，当前 mock 只接受 123456');
+    if (username != AppConstants.mockAccountUsername ||
+        password != AppConstants.mockAccountPassword) {
+      throw StateError('账号或密码错误，当前 mock 只接受 demo_user / Demo12345');
     }
 
-    final normalizedPhone = normalizePhoneNumber(phone);
-    final accessToken = 'mock-access-${normalizedPhone.hashCode}-${code.hashCode}';
-    final refreshToken = 'mock-refresh-${normalizedPhone.hashCode}-${deviceId.hashCode}';
-    _accessTokenPhoneMap[accessToken] = normalizedPhone;
-    _refreshTokenPhoneMap[refreshToken] = normalizedPhone;
+    final accessToken = 'mock-access-${username.hashCode}-${deviceId.hashCode}';
+    final refreshToken = 'mock-refresh-${username.hashCode}-${deviceId.hashCode}';
+    _accessTokenUserMap[accessToken] = username;
+    _refreshTokenUserMap[refreshToken] = username;
     return AuthTokenPair(
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -92,20 +81,15 @@ class MockAuthApi implements AuthApi {
   }
 
   @override
-  Future<SendCodeResponse> sendCode(String phone) async {
-    await Future<void>.delayed(const Duration(milliseconds: 250));
-    return const SendCodeResponse(
-      cooldownSeconds: AppConstants.resendCooldownSeconds,
-      mockCode: AppConstants.mockVerificationCode,
-    );
-  }
-
-  @override
   Future<AuthProfile> me(String accessToken) async {
-    final phone = _accessTokenPhoneMap[accessToken] ?? '13800138000';
+    final username =
+        _accessTokenUserMap[accessToken] ?? AppConstants.mockAccountUsername;
     return AuthProfile(
-      id: 'mock-user-${phone.hashCode}',
-      phone: maskPhoneNumber(phone),
+      id: 'mock-account-${username.hashCode}',
+      username: username,
+      displayName:
+          username == AppConstants.mockAccountUsername ? '演示账号' : username,
+      role: 'app_user',
       status: 'active',
       createdAt: DateTime.now().subtract(const Duration(days: 7)),
     );
@@ -116,12 +100,13 @@ class MockAuthApi implements AuthApi {
     required String refreshToken,
     required String deviceId,
   }) async {
-    final normalizedPhone =
-        _refreshTokenPhoneMap[refreshToken] ?? '13800138000';
-    final accessToken = 'mock-access-${normalizedPhone.hashCode}-${refreshToken.hashCode}';
-    final nextRefreshToken = 'mock-refresh-${normalizedPhone.hashCode}-${deviceId.hashCode}-${DateTime.now().microsecondsSinceEpoch}';
-    _accessTokenPhoneMap[accessToken] = normalizedPhone;
-    _refreshTokenPhoneMap[nextRefreshToken] = normalizedPhone;
+    final username =
+        _refreshTokenUserMap[refreshToken] ?? AppConstants.mockAccountUsername;
+    final accessToken = 'mock-access-${username.hashCode}-${refreshToken.hashCode}';
+    final nextRefreshToken =
+        'mock-refresh-${username.hashCode}-${deviceId.hashCode}-${DateTime.now().microsecondsSinceEpoch}';
+    _accessTokenUserMap[accessToken] = username;
+    _refreshTokenUserMap[nextRefreshToken] = username;
     return AuthTokenPair(
       accessToken: accessToken,
       refreshToken: nextRefreshToken,

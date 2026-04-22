@@ -9,8 +9,26 @@ const response_interceptor_1 = require("./common/interceptors/response.intercept
 const release_runtime_preflight_1 = require("./common/runtime/release-runtime.preflight");
 async function bootstrap() {
     (0, release_runtime_preflight_1.assertReleaseRuntimePreflight)();
-    const app = await core_1.NestFactory.create(app_module_1.AppModule, { cors: true });
-    app.setGlobalPrefix('api/v1');
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, {
+        cors: true,
+        rawBody: true,
+    });
+    app.setGlobalPrefix('api/v1', {
+        exclude: [
+            {
+                path: 'webhooks/inbound-call',
+                method: common_1.RequestMethod.POST,
+            },
+            {
+                path: 'webhooks/call-status',
+                method: common_1.RequestMethod.POST,
+            },
+            {
+                path: 'webhooks/recording-ready',
+                method: common_1.RequestMethod.POST,
+            },
+        ],
+    });
     app.useGlobalPipes(new common_1.ValidationPipe({
         transform: true,
         whitelist: true,

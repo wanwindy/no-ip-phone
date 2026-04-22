@@ -2,10 +2,10 @@ import 'dotenv/config';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { UserEntity } from '../modules/user/entities/user.entity';
-import { AuthCodeEntity } from '../modules/auth/entities/auth-code.entity';
-import { RefreshTokenEntity } from '../modules/auth/entities/refresh-token.entity';
 import { DialPrefixConfigEntity } from '../modules/config/entities/dial-prefix-config.entity';
 import { NoticeEntity } from '../modules/config/entities/notice.entity';
+import { AccountEntity } from '../modules/account/entities/account.entity';
+import { AccountRefreshTokenEntity } from '../modules/account/entities/account-refresh-token.entity';
 
 export default new DataSource({
   type: 'postgres',
@@ -16,8 +16,8 @@ export default new DataSource({
   database: process.env.DB_NAME ?? 'privacy_dialer',
   entities: [
     UserEntity,
-    AuthCodeEntity,
-    RefreshTokenEntity,
+    AccountEntity,
+    AccountRefreshTokenEntity,
     DialPrefixConfigEntity,
     NoticeEntity,
   ],

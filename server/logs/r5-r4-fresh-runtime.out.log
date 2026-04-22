@@ -1,0 +1,59 @@
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +83ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTenantModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RateLimitModule] [39m[32mRate limit driver initialized with memory[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRateLimitModule dependencies initialized[39m[38;5;3m +16ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+query: SELECT version()
+query: SELECT * FROM current_schema()
+query: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +42ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAccountModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCallsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTelephonyModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +9ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminAuthController {/api/v1/admin/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/auth/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminAccountsController {/api/v1/admin/accounts}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/accounts, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/accounts, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/accounts/:accountId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminConfigController {/api/v1/admin/config}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/dial-prefixes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/dial-prefixes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/dial-prefixes/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/notices, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/notices, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/config/notices/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConfigController {/api/v1/config}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/config/dial-prefixes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/config/notices, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCallsController {/api/v1/calls}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/calls/outbound, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/calls/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTelephonyController {/api/v1/webhooks}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/webhooks/inbound-call, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/webhooks/call-status, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/webhooks/recording-ready, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 8980  - [39m2026/04/22 21:32:33 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m

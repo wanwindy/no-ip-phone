@@ -11,5 +11,6 @@ void main() {
       '#31#13800138000',
     );
     expect(AppConstants.defaultDialPrefix, '#31#');
+    expect(AppConstants.mockAccountUsername, 'demo_user');
   });
 }

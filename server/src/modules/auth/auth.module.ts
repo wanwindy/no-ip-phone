@@ -3,12 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SmsModule } from '../sms/sms.module';
 import { RateLimitModule } from '../rate-limit/rate-limit.module';
-import { UserModule } from '../user/user.module';
+import { AccountModule } from '../account/account.module';
+import { AccountRefreshTokenEntity } from '../account/entities/account-refresh-token.entity';
+import { TenantModule } from '../tenant/tenant.module';
 import { AuthController } from './auth.controller';
-import { AuthCodeEntity } from './entities/auth-code.entity';
-import { RefreshTokenEntity } from './entities/refresh-token.entity';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
@@ -25,10 +24,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         },
       }),
     }),
-    TypeOrmModule.forFeature([AuthCodeEntity, RefreshTokenEntity]),
-    UserModule,
-    SmsModule,
+    TypeOrmModule.forFeature([AccountRefreshTokenEntity]),
+    AccountModule,
     RateLimitModule,
+    TenantModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

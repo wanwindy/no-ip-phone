@@ -1,21 +1,19 @@
-import '../../../shared/utils/phone_utils.dart';
-
 class AuthUser {
   const AuthUser({
-    required this.phone,
-    required this.displayPhone,
+    required this.username,
+    required this.displayName,
   });
 
-  final String phone;
-  final String displayPhone;
+  final String username;
+  final String displayName;
 
   AuthUser copyWith({
-    String? phone,
-    String? displayPhone,
+    String? username,
+    String? displayName,
   }) {
     return AuthUser(
-      phone: phone ?? this.phone,
-      displayPhone: displayPhone ?? this.displayPhone,
+      username: username ?? this.username,
+      displayName: displayName ?? this.displayName,
     );
   }
 }
@@ -57,8 +55,8 @@ class AuthSession {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'phone': user.phone,
-      'displayPhone': user.displayPhone,
+      'username': user.username,
+      'displayName': user.displayName,
       'accessToken': tokens.accessToken,
       'refreshToken': tokens.refreshToken,
       'expiresAt': tokens.expiresAt.toIso8601String(),
@@ -68,9 +66,8 @@ class AuthSession {
   factory AuthSession.fromJson(Map<String, dynamic> json) {
     return AuthSession(
       user: AuthUser(
-        phone: json['phone'] as String? ?? '',
-        displayPhone: json['displayPhone'] as String? ??
-            maskPhoneNumber(json['phone'] as String? ?? ''),
+        username: json['username'] as String? ?? '',
+        displayName: json['displayName'] as String? ?? '',
       ),
       tokens: AuthTokens(
         accessToken: json['accessToken'] as String? ?? '',

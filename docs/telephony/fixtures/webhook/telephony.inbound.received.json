@@ -1,0 +1,14 @@
+{
+  "event_name": "telephony.inbound.received",
+  "event_direction": "inbound",
+  "provider_key": "provider-au-01",
+  "trunk_key": "au-did-inbound-01",
+  "provider_event_id": "evt_in_0001",
+  "provider_call_id": "provcall_in_0001",
+  "occurred_at": "2026-04-22T10:00:00Z",
+  "trace_id": "trace_r5r3_in_0001",
+  "display_did": "+617676021983",
+  "remote_number": "+8613812345678",
+  "provider_raw_status": "incoming",
+  "provider_raw_reason": null
+}

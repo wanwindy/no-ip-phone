@@ -3,11 +3,6 @@ import {
   resolveRateLimitDriver,
   resolveRateLimitFallbackAllowed,
 } from '../../modules/rate-limit/rate-limit.constants';
-import {
-  isImplementedSmsProvider,
-  isNoopSmsProvider,
-  resolveSmsProviderName,
-} from '../../modules/sms/sms.constants';
 
 function normalizeNodeEnv(value?: string): string {
   return value?.trim().toLowerCase() || 'development';
@@ -37,7 +32,6 @@ export function assertReleaseRuntimePreflight(
     nodeEnv,
     env.RATE_LIMIT_ALLOW_FALLBACK,
   );
-  const smsProviderRaw = env.SMS_PROVIDER;
   const errors: string[] = [];
 
   if (driver !== RATE_LIMIT_DRIVER_REDIS) {
@@ -56,24 +50,6 @@ export function assertReleaseRuntimePreflight(
     errors.push(
       'NODE_ENV=production requires explicit REDIS_URL or REDIS_HOST with REDIS_PORT.',
     );
-  }
-
-  try {
-    const smsProvider = resolveSmsProviderName(smsProviderRaw);
-
-    if (isNoopSmsProvider(smsProvider)) {
-      errors.push(
-        'NODE_ENV=production requires a real SMS provider; SMS_PROVIDER=noop is local-only.',
-      );
-    }
-
-    if (!isImplementedSmsProvider(smsProvider)) {
-      errors.push(
-        `SMS provider "${smsProvider}" is not implemented in this build yet. Integrate it before production startup.`,
-      );
-    }
-  } catch (error) {
-    errors.push(error instanceof Error ? error.message : String(error));
   }
 
   if (errors.length === 0) {

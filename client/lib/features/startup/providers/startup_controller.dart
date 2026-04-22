@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../admin/providers/admin_auth_controller.dart';
 import '../../auth/providers/auth_controller.dart';
 import '../../dialer/providers/dialer_controller.dart';
 import '../../settings/providers/settings_controller.dart';
@@ -46,6 +47,7 @@ class StartupController extends Notifier<StartupState> {
 
     await Future.wait([
       _safe(() => ref.read(authControllerProvider.notifier).initialize()),
+      _safe(() => ref.read(adminAuthControllerProvider.notifier).initialize()),
       _safe(() => ref.read(settingsControllerProvider.notifier).load()),
       _safe(() => ref.read(dialControllerProvider.notifier).loadHistory()),
     ]);

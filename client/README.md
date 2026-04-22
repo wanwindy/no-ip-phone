@@ -1,6 +1,6 @@
 # 隐私拨号 Client
 
-这是 `client/` 的 Flutter 客户端。Round 2 已把默认实现切到真实 HTTP 联调，mock 仅能通过显式开关启用。
+这是 `client/` 的 Flutter 客户端。当前默认走真实 HTTP 联调，mock 仅能通过显式开关启用；用户端账号密码登录和管理后台页面都已接入同一个客户端工程。
 
 ## 本地联调
 
@@ -28,14 +28,15 @@ flutter run \
 
 ## 接口约定
 
-- `AuthApi` 默认走真实 HTTP：`send-code`、`login`、`refresh`、`logout`、`me`
+- `AuthApi` 默认走真实 HTTP：`login`、`refresh`、`logout`、`me`
 - `ConfigApi` 默认走真实 HTTP：`dial-prefixes`、`notices`
+- `AdminApi` 默认走真实 HTTP：`admin/auth/*`、`admin/accounts`、`admin/config/dial-prefixes`、`admin/config/notices`
 - 统一响应结构为 `{ code, message, data }`
-- 联调环境的验证码由服务端环境变量固定为 `123456`，不会出现在 `send-code` 响应里
+- 管理后台和用户端会话已隔离存储，不会共用 token
 
 ## 当前状态
 
-- 路由、登录态守卫、主页、设置页、帮助页、关于页已保留
+- 路由、登录态守卫、主页、设置页、帮助页、关于页、管理后台登录页、管理控制台已接入
 - 默认 API 实现已切到 HTTP
 - mock 仅通过 `USE_MOCK_API=true` 启用
 - `flutter analyze` 和 `flutter test` 通过

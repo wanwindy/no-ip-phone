@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../shared/utils/phone_utils.dart';
 import '../../../shared/widgets/app_background.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -19,32 +18,40 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _agree = true;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _sendCode() async {
-    final phone = _phoneController.text;
-    if (!isDialablePhoneNumber(phone)) {
+  Future<void> _login() async {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text;
+    if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请输入合法手机号/座机/国际号码')),
+        const SnackBar(content: Text('请输入账号和密码')),
       );
       return;
     }
-    final success = await ref.read(authControllerProvider.notifier).sendCode(phone);
+
+    final session = await ref.read(authControllerProvider.notifier).login(
+          username: username,
+          password: password,
+        );
     if (!mounted) {
       return;
     }
-    if (success) {
-      context.go(AppConstants.verifyPath);
+    if (session != null) {
+      context.go(AppConstants.homePath);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(ref.read(authControllerProvider).errorMessage ?? '验证码发送失败')),
+        SnackBar(content: Text(ref.read(authControllerProvider).errorMessage ?? '登录失败')),
       );
     }
   }
@@ -52,7 +59,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
-    final canSend = _agree && isDialablePhoneNumber(_phoneController.text);
+    final canLogin = _agree &&
+        _usernameController.text.trim().isNotEmpty &&
+        _passwordController.text.isNotEmpty;
 
     return AppBackground(
       child: Scaffold(
@@ -68,22 +77,44 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '手机号验证码登录',
+                    '账号密码登录',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     AppConfig.useMockApi
-                        ? '当前为显式 mock 联调模式，验证码固定为 123456。'
-                        : '当前连接真实 HTTP 接口，开发环境验证码由服务端环境变量控制。',
+                        ? '当前为显式 mock 联调模式，演示账号为 demo_user / Demo12345。'
+                        : '当前连接真实 HTTP 接口，请使用后台创建的账号登录。',
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
-                    controller: _phoneController,
-                    label: '手机号',
-                    hintText: '13800138000',
-                    keyboardType: TextInputType.phone,
-                    prefixIcon: Icons.phone_android_outlined,
+                    controller: _usernameController,
+                    label: '账号',
+                    hintText: 'demo_user',
+                    keyboardType: TextInputType.text,
+                    prefixIcon: Icons.person_outline,
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 12),
+                  AppTextField(
+                    controller: _passwordController,
+                    label: '密码',
+                    hintText: '请输入密码',
+                    keyboardType: TextInputType.visiblePassword,
+                    prefixIcon: Icons.lock_outline,
+                    obscureText: _obscurePassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                    ),
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 8),
@@ -96,20 +127,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   AppPrimaryButton(
-                    label: '获取验证码',
-                    icon: Icons.sms_outlined,
+                    label: '登录',
+                    icon: Icons.login_outlined,
                     isLoading: authState.status == AuthStatus.booting,
-                    onPressed: canSend ? _sendCode : null,
+                    onPressed: canLogin ? _login : null,
+                  ),
+                  const SizedBox(height: 12),
+                  AppSecondaryButton(
+                    label: '进入管理后台',
+                    icon: Icons.admin_panel_settings_outlined,
+                    onPressed: () => context.go(AppConstants.adminDashboardPath),
                   ),
                   const SizedBox(height: 12),
                   if (AppConfig.useMockApi)
                     Text(
-                      'Mock 提示：验证码固定为 ${AppConstants.mockVerificationCode}',
+                      'Mock 提示：演示账号 ${AppConstants.mockAccountUsername} / ${AppConstants.mockAccountPassword}',
                       style: Theme.of(context).textTheme.bodySmall,
                     )
                   else
                     Text(
-                      '联调提示：请使用服务端配置的固定验证码进行验证。',
+                      '联调提示：首个管理员和演示账号可通过服务端 bootstrap 环境变量初始化。',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                 ],
@@ -121,11 +158,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '待接入项',
+                    '管理后台',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  const Text('真实短信发送、验证码限流和后端登录态校验都在下一轮接入。'),
+                  Text(
+                    AppConfig.useMockApi
+                        ? '管理后台已接入，可使用 ${AppConstants.mockAdminUsername} / ${AppConstants.mockAdminPassword} 登录。'
+                        : '管理后台已接入，可用服务端 bootstrap 初始化的管理员账号登录并维护用户、前缀和公告。',
+                  ),
                 ],
               ),
             ),
